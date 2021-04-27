@@ -1,6 +1,7 @@
 ﻿using RabbitMQ.Client;
 using System;
 using System.Text;
+using System.Threading;
 
 namespace Produto
 {
@@ -23,17 +24,20 @@ namespace Produto
                                           arguments: null);
 
                     // O conteúdo da mensagem é uma matriz de bytes
-                    string message = "Olá Mundo!";
-                    var body = Encoding.UTF8.GetBytes(message);
+                    int count = 0;
+                    while (true)
+                    {
+                        string message = $"{count++} Olá Mundo!";
+                        var body = Encoding.UTF8.GetBytes(message);
 
-                    channel.BasicPublish(exchange: "",
-                                         routingKey: "Hello",
-                                         basicProperties: null,
-                                         body: body);
-                    Console.WriteLine("[x] Enviado {0}", message);
+                        channel.BasicPublish(exchange: "",
+                                             routingKey: "Hello",
+                                             basicProperties: null,
+                                             body: body);
+                        Console.WriteLine("[x] Enviado {0}", message);
+                        Thread.Sleep(200);
+                    }
                 }
-                Console.WriteLine("Pressione [Enter] para sair.");
-                Console.WriteLine();
             }
         }
     }
